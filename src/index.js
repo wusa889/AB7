@@ -79,33 +79,25 @@ function view(dispatch, model) {
 // Update function which takes a message and a model and returns a new/updated model
 function update(msg, model) {
   switch (
-    msg.type // Verwende msg.type, um den Nachrichtentyp zu prüfen
+    msg.type 
   ) {
     case MSGS.DELETE_ITEM:
-      const iddel = msg.payload; // Verwende msg.payload, um auf die Daten zuzugreifen
+      const iddel = msg.payload;
       const filteredTItems = model.tItems.filter((item) => item.id !== iddel);
       return { ...model, tItems: filteredTItems };
     case MSGS.ADD_ITEM:
-      let request = new XMLHttpRequest();
-      request.open("GET", "http://192.168.0.196:9000/config.json", false); 
-      request.send(null);
-      if (request.status === 200) {
-        let configData = JSON.parse(request.responseText);
-        console.log(configData.apiWeatherKey);
-      }
-      const location = msg.payload.location;
-      const temp = 1;
-      const high = 2;
-      const low = 1;
-      const id = Date.now();
-      const newTItem = { id, location, temp, high, low };
-      const updatedTItems = model.tItems.concat(newTItem);
-      return { ...model, tItems: updatedTItems };
+      const messagePayload = msg.payload.location;
+      console.log(messagePayload)
 
-    default:
+      let [lat, lon] = messagePayload.split(" ");
+      let newWeatherObj = getWeatherData(lat, lon)
+      const updatedTItems = model.tItems.concat(newWeatherObj);
+      return { ...model, tItems: updatedTItems };
+     default:
       return model;
   }
 }
+
 // ⚠️ Impure code below (not avoidable but controllable)
 function app(initModel, update, view, node) {
   let model = initModel;
@@ -121,17 +113,10 @@ function app(initModel, update, view, node) {
   }
 }
 
-// The initial model when the app starts
+const myTestData = getWeatherData(51.509865, -0.118092)
+
 const initModel = {
-  tItems: [
-    {
-      id: 1,
-      location: "blin",
-      temp: 1,
-      high: 2,
-      low: 1,
-    },
-  ],
+  tItems: [myTestData],
 };
 
 // The root node of the app (the div with id="app" in index.html)
@@ -139,3 +124,27 @@ const rootNode = document.getElementById("app");
 
 // Start the app
 app(initModel, update, view, rootNode);
+
+
+function getWeatherData(lat, lon){
+  let configData;
+  let weatherdata;
+  let id = Date.now();
+  let request = new XMLHttpRequest();
+      request.open("GET", "http://192.168.0.196:9000/config.json", false);
+      request.send(null);
+      if (request.status === 200) {
+        configData = JSON.parse(request.responseText);
+      }
+  let apiRequest = new XMLHttpRequest();
+      apiRequest.open("GET", `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${configData.apiWeatherKey}&units=metric`, false);
+      apiRequest.send(null);
+      if(apiRequest.status === 200){
+        weatherdata = JSON.parse(apiRequest.responseText)
+      }
+
+      console.log(weatherdata)
+
+  let returnObj = {id: id, location: weatherdata.name, temp: weatherdata.main.temp, high: weatherdata.main.temp_max, low: weatherdata.main.temp_min }
+  return returnObj;
+}
