@@ -12,6 +12,7 @@ const btnStyle = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 r
 const MSGS = {
   UPDATE_MODEL: "UPDATE_MODEL",
   UPDATE_RANDOM_NUMBER: "UPDATE_RANDOM_NUMBER",
+  TEST: "TEST"
   // ... ℹ️ additional messages
 };
 
