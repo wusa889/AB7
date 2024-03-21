@@ -1,13 +1,13 @@
 {
-  "name": "example_project",
+  "name": "weather_project",
   "version": "1.0.0",
-  "description": "An example project for all module 323 exercises",
+  "description": "My weather app school project",
   "scripts": {
     "dev": "webpack serve --mode development",
-    "build": "webpack --mode production"
+    "build": "cross-env API_KEY=deinGeheimerApiKey webpack --mode production"
   },
   "browserslist": "> 0.25%, not dead",
-  "author": "Sebastian Keable",
+  "author": "Julian Brecht",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.2",
