@@ -131,7 +131,7 @@ function getWeatherData(lat, lon){
   let weatherdata;
   let id = Date.now();
   let request = new XMLHttpRequest();
-      request.open("GET", "http://192.168.0.196:9000/config.json", false);
+      request.open("GET", "http://192.168.1.120:9000/config.json", false);
       request.send(null);
       if (request.status === 200) {
         configData = JSON.parse(request.responseText);
